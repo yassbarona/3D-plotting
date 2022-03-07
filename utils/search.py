@@ -111,4 +111,4 @@ class Search:
         fig = go.Figure(data=[go.Surface(z=ds_chm)])
         fig.show()
         
-Search()
+
