@@ -10,6 +10,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
 pio.renderers.default = "browser"
+import math 
+
 
 
 
@@ -17,16 +19,15 @@ class Search:
 
     nom = Nominatim(user_agent="Mon_Application")
     lambert_coo = []
+    n = 0
 
     def __init__(self):
-        address = input('Enter address--->')
+        address = input('Enter address---> ')
         result = self.nom.geocode(address)
         try:
             confirmation = input(f'\n Is this the address you are looking for? \n”{result.raw["display_name"]}" \n Yes/Y No/N --> ')
             if confirmation == "Y":
-                lat = result.latitude
-                lon = result.longitude
-                self.coordinates(lat,lon)
+                  self.meters(result)
             elif confirmation == "N" :
                 print("Please try beign more specific. Include city and country to the search")
                 Search()
@@ -37,6 +38,21 @@ class Search:
             print('Somethign went wrong, please try again. Verify that inputs are corrrect')
             print('ex',e)
             Search()
+
+    def meters(self, result):
+        result = result
+        n_input = int(input('\n Please enter the desired range in m² --->'))
+        if type(n_input) != int:
+            print("Invalid answer. Please try again!")
+            self.meters(result)
+        elif n_input > 5000:
+            print('Sorry, that range is too large, try a smaller one')
+            self.meters(result)
+        else:
+            self.n = n_input
+        lat = result.latitude
+        lon = result.longitude
+        self.coordinates(lat,lon)
 
     def coordinates(self, lat, lon):
         gps_coo = [lat, lon]
@@ -51,18 +67,10 @@ class Search:
         
 
     def boundries(self):
-        n = int(input('\n Please enter the desired range in m² --->'))
-        if n != int:
-            print("Invalid answer. Please try again!")
-            self.boundries()
-        elif n > 500:
-            print('Sorry, that range is too large, try a smaller one')
-            self.boundries()
-        else:
-            xmin = self.lambert_coo[0][0] - n
-            xmax = self.lambert_coo[0][0] + n
-            ymin = self.lambert_coo[0][1] - n
-            ymax = self.lambert_coo[0][1] + n
+            xmin = self.lambert_coo[0][0] - math.sqrt(self.n)
+            xmax = self.lambert_coo[0][0] + math.sqrt(self.n)
+            ymin = self.lambert_coo[0][1] - math.sqrt(self.n)
+            ymax = self.lambert_coo[0][1] + math.sqrt(self.n)
             bbox = [xmin,ymax,xmax,ymin]
             return(bbox) 
         
