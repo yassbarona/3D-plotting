@@ -11,6 +11,8 @@ import plotly.graph_objects as go
 import plotly.io as pio
 pio.renderers.default = "browser"
 import math 
+import streamlit as st
+
 
 
 
@@ -22,12 +24,12 @@ class Search:
     n = 0
 
     def __init__(self):
-        address = input('Enter address---> ')
+        address = input('Please type the address you would like to search --- > ')
         result = self.nom.geocode(address)
         try:
-            confirmation = input(f'\n Is this the address you are looking for? \n”{result.raw["display_name"]}" \n Yes/Y No/N --> ')
+            confirmation = input(f'\n Is this the address you are looking for? \n”{result.raw["display_name"]} \n Y = Yes, N = No ---> ')
             if confirmation == "Y":
-                  self.meters(result)
+                self.meters(result)
             elif confirmation == "N" :
                 print("Please try beign more specific. Include city and country to the search")
                 Search()
